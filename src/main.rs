@@ -64,7 +64,7 @@ Examples:
                 .about("Pushes the current branch to the remote. Will not push if there are uncommitted changes.")
                 .arg(
                     Arg::new("force")
-                        .help("Force push. Ignores uncommitted changes")
+                        .help("Force push. Ignores uncommitted changes. **WARNING**: This is the same as `git push -f`!")
                         .long("force")
                         .short('f')
                         .takes_value(false),
