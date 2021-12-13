@@ -6,6 +6,7 @@ type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
 fn main() -> Result<()> {
     let app = App::new("qit")
+        // Commit
         .subcommand(
             App::new("commit")
                 .alias("c")
@@ -32,6 +33,16 @@ fn main() -> Result<()> {
                         .required(true),
                 ),
         )
+        // Log
+        .subcommand(
+            App::new("log").alias("l").about("Shows the git log").arg(
+                Arg::new("short")
+                    .long("short")
+                    .short('s')
+                    .help("Whether to show a shortened git log"),
+            ),
+        )
+        // Status
         .subcommand(App::new("status").about("Checks the current status of the repo"));
 
     let matches = app.get_matches();
@@ -47,6 +58,10 @@ fn main() -> Result<()> {
             };
             println!("Committing: {}", formatted);
             commit(&formatted)?;
+        }
+        Some(("log", args)) => {
+            let short = args.is_present("short");
+            log(short)?;
         }
         _ => panic!("aaaaaaa"),
     }
@@ -67,5 +82,15 @@ fn commit(message: &String) -> Result<()> {
         .arg(message)
         .spawn()?
         .wait()?;
+    Ok(())
+}
+
+fn log(short: bool) -> Result<()> {
+    let mut cmd = Command::new("git");
+    cmd.arg("log");
+    if short {
+        cmd.arg("--oneline");
+    }
+    cmd.spawn()?.wait()?;
     Ok(())
 }
