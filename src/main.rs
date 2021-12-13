@@ -28,6 +28,8 @@ Emojis:
          doc 📝
         deps 📦
       deploy 🚀
+    
+    Emojis inspired by https://gitmoji.dev/
 
 Examples:
     ✨ feature: Add thing
@@ -116,6 +118,7 @@ fn handle(res: Result<()>) {
 // Subcommands //
 
 fn commit(type_: &str, area: &Option<&str>, message: &str) -> Result<()> {
+    // Emojis inspired by https://gitmoji.dev/
     let emoji = match type_ {
         "chore" => "🚧",
         "feature" => "✨",
