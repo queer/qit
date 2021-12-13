@@ -14,6 +14,16 @@ fn main() -> Result<()> {
             App::new("commit")
                 .alias("c")
                 .about("Commits with a meaningful commit message")
+                .after_help("
+Format:
+    <emoji> <type>[(<area>)]: <message>
+
+Examples:
+    ✨ feature: Add thing
+    ✨ feature(cli): Improve args
+    🚧 chore: Do thing
+    🚀 deploy(api): Deploy to production
+                ")
                 .arg(
                     Arg::new("type")
                         .help("The type of commit")
@@ -68,19 +78,30 @@ fn main() -> Result<()> {
             let type_ = args.value_of("type").unwrap();
             let area = args.value_of("area");
             let message = args.value_of("message").unwrap();
-            commit(type_, &area, message)?;
+            handle(commit(type_, &area, message));
         }
         Some(("log", args)) => {
             let short = args.is_present("short");
-            log(short)?;
+            handle(log(short));
         }
         Some(("push", args)) => {
             let force = args.is_present("force");
-            push(force)?;
+            handle(push(force));
         }
         _ => panic!("aaaaaaa"),
     }
     Ok(())
+}
+
+fn handle(res: Result<()>) {
+    match res {
+        Ok(_) => (),
+        Err(err) => {
+            eprintln!("💥 Unable to run command:");
+            eprintln!("{}", err);
+            std::process::exit(1);
+        }
+    };
 }
 
 // Subcommands //
