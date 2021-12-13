@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 clap = "3.0.0-rc.4"
+git2 = "0.13.25"

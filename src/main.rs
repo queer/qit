@@ -1,6 +1,9 @@
-use std::{error::Error, process::Command};
+use std::error::Error;
+use std::io::{Error as IOError, ErrorKind};
+use std::process::Command;
 
 use clap::{App, Arg};
+use git2::Repository;
 
 type Result<T> = std::result::Result<T, Box<dyn Error>>;
 
@@ -33,6 +36,19 @@ fn main() -> Result<()> {
                         .required(true),
                 ),
         )
+        // Push
+        .subcommand(
+            App::new("push")
+                .alias("p")
+                .about("Pushes the current branch to the remote. Will not push if there are uncommitted changes.")
+                .arg(
+                    Arg::new("force")
+                        .help("Force push. Ignores uncommitted changes")
+                        .long("force")
+                        .short('f')
+                        .takes_value(false),
+                ),
+        )
         // Log
         .subcommand(
             App::new("log").alias("l").about("Shows the git log").arg(
@@ -58,6 +74,10 @@ fn main() -> Result<()> {
             let short = args.is_present("short");
             log(short)?;
         }
+        Some(("push", args)) => {
+            let force = args.is_present("force");
+            push(force)?;
+        }
         _ => panic!("aaaaaaa"),
     }
     Ok(())
@@ -80,7 +100,7 @@ fn commit(type_: &str, area: &Option<&str>, message: &str) -> Result<()> {
         Some(area) => format!("{} {}({}): {}", emoji, type_, area, message),
         None => format!("{} {}: {}", emoji, type_, message),
     };
-    
+
     Command::new("git")
         .arg("add")
         .arg("-A")
@@ -105,4 +125,33 @@ fn log(short: bool) -> Result<()> {
     }
     cmd.spawn()?.wait()?;
     Ok(())
+}
+
+fn push(force: bool) -> Result<()> {
+    let pending_changes = if let Ok(count) = repo_status() {
+        count > 0
+    } else {
+        false
+    };
+
+    if pending_changes && !force {
+        return Err(IOError::new(ErrorKind::Other, "There are uncommitted changes").into());
+    }
+    let mut cmd = Command::new("git");
+    cmd.arg("push");
+    if force {
+        cmd.arg("--force");
+    }
+    cmd.spawn()?.wait()?;
+    Ok(())
+}
+
+fn repo_status() -> Result<usize> {
+    let repo = Repository::open(".")?;
+    let modified_files = repo
+        .statuses(Some(git2::StatusOptions::new().include_untracked(true)))?
+        .iter()
+        .map(|s| !s.status().is_ignored())
+        .count();
+    Ok(modified_files)
 }
