@@ -15,7 +15,7 @@ fn main() -> Result<()> {
                     Arg::new("type")
                         .help("The type of commit")
                         .possible_values(vec![
-                            "chore", "feature", "refactor", "fix", "test", "style", "doc",
+                            "chore", "feature", "refactor", "fix", "test", "style", "doc", "deps", "deploy",
                         ])
                         .required(true),
                 )
@@ -52,12 +52,7 @@ fn main() -> Result<()> {
             let type_ = args.value_of("type").unwrap();
             let area = args.value_of("area");
             let message = args.value_of("message").unwrap();
-            let formatted = match area {
-                Some(area) => format!("{}({}): {}", type_, area, message),
-                None => format!("{}: {}", type_, message),
-            };
-            println!("Committing: {}", formatted);
-            commit(&formatted)?;
+            commit(type_, &area, message)?;
         }
         Some(("log", args)) => {
             let short = args.is_present("short");
@@ -68,7 +63,24 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn commit(message: &String) -> Result<()> {
+fn commit(type_: &str, area: &Option<&str>, message: &str) -> Result<()> {
+    let emoji = match type_ {
+        "chore" => "🚧",
+        "feature" => "✨",
+        "refactor" => "♻️",
+        "fix" => "🐛",
+        "test" => "✅",
+        "style" => "🎨",
+        "doc" => "📝",
+        "deps" => "📦",
+        "deploy" => "🚀",
+        _ => panic!("Unknown commit type"),
+    };
+    let formatted = match area {
+        Some(area) => format!("{} {}({}): {}", emoji, type_, area, message),
+        None => format!("{} {}: {}", emoji, type_, message),
+    };
+    
     Command::new("git")
         .arg("add")
         .arg("-A")
@@ -79,7 +91,7 @@ fn commit(message: &String) -> Result<()> {
     Command::new("git")
         .arg("commit")
         .arg("-am")
-        .arg(message)
+        .arg(formatted)
         .spawn()?
         .wait()?;
     Ok(())
