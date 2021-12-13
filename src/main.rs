@@ -78,9 +78,7 @@ Examples:
                     .short('s')
                     .help("Whether to show a shortened git log"),
             ),
-        )
-        // Status
-        .subcommand(App::new("status").about("Checks the current status of the repo"));
+        );
 
     let matches = app.get_matches();
 
