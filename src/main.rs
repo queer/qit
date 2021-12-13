@@ -83,6 +83,8 @@ fn main() -> Result<()> {
     Ok(())
 }
 
+// Subcommands //
+
 fn commit(type_: &str, area: &Option<&str>, message: &str) -> Result<()> {
     let emoji = match type_ {
         "chore" => "🚧",
@@ -145,6 +147,8 @@ fn push(force: bool) -> Result<()> {
     cmd.spawn()?.wait()?;
     Ok(())
 }
+
+// Helpers //
 
 fn repo_status() -> Result<usize> {
     let repo = Repository::open(".")?;
