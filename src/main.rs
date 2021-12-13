@@ -18,6 +18,17 @@ fn main() -> Result<()> {
 Format:
     <emoji> <type>[(<area>)]: <message>
 
+Emojis:
+       chore 🚧
+     feature ✨
+    refactor ♻️
+         fix 🐛
+        test ✅
+       style 🎨
+         doc 📝
+        deps 📦
+      deploy 🚀
+
 Examples:
     ✨ feature: Add thing
     ✨ feature(cli): Improve args
