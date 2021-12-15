@@ -1,3 +1,4 @@
+use std::env;
 use std::error::Error;
 use std::io::{Error as IOError, ErrorKind};
 use std::process::Command;
@@ -129,12 +130,25 @@ fn commit(type_: &str, area: &Option<&str>, message: &str) -> Result<()> {
         "doc" => "📝",
         "deps" => "📦",
         "deploy" => "🚀",
-        _ => panic!("Unknown commit type"),
+        _ => {
+            panic!("Unknown commit type")
+        },
+    };
+    let emoji = match env::var("QIT_DISABLE_EMOJIS") {
+        Ok(value) => {
+            if value == "true" {
+                ""
+            } else {
+                emoji
+            }
+        },
+        _ => emoji,
     };
     let formatted = match area {
         Some(area) => format!("{} {}({}): {}", emoji, type_, area, message),
         None => format!("{} {}: {}", emoji, type_, message),
     };
+    let formatted = formatted.trim();
 
     Command::new("git")
         .arg("add")
