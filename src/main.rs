@@ -73,6 +73,12 @@ Examples:
                         .takes_value(false),
                 ),
         )
+        // Undo
+        .subcommand(
+            App::new("undo")
+                .alias("u")
+                .about("Undoes the last commit"),
+        )
         // Log
         .subcommand(
             App::new("log").alias("l").about("Shows the git log").arg(
@@ -100,6 +106,7 @@ Examples:
             let force = args.is_present("force");
             handle(push(force));
         }
+        Some(("undo", _)) => handle(undo()),
         _ => panic!("aaaaaaa"),
     }
     Ok(())
@@ -132,7 +139,7 @@ fn commit(type_: &str, area: &Option<&str>, message: &str) -> Result<()> {
         "deploy" => "🚀",
         _ => {
             panic!("Unknown commit type")
-        },
+        }
     };
     let emoji = match env::var("QIT_DISABLE_EMOJIS") {
         Ok(value) => {
@@ -141,7 +148,7 @@ fn commit(type_: &str, area: &Option<&str>, message: &str) -> Result<()> {
             } else {
                 emoji
             }
-        },
+        }
         _ => emoji,
     };
     let formatted = match area {
@@ -192,6 +199,16 @@ fn push(force: bool) -> Result<()> {
         cmd.arg("--force");
     }
     cmd.spawn()?.wait()?;
+    Ok(())
+}
+
+fn undo() -> Result<()> {
+    Command::new("git")
+        .arg("reset")
+        .arg("--soft")
+        .arg("HEAD~1")
+        .spawn()?
+        .wait()?;
     Ok(())
 }
 
