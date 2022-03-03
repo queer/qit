@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 cargo build --release
-cp target/release/qit ~/bin
+cp -v target/release/qit ~/bin

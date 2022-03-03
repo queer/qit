@@ -107,7 +107,7 @@ Examples:
             handle(push(force));
         }
         Some(("undo", _)) => handle(undo()),
-        _ => panic!("aaaaaaa"),
+        _ => println!("{}", repo_status()?),
     }
     Ok(())
 }
