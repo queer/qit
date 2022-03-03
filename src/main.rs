@@ -219,7 +219,7 @@ fn repo_status() -> Result<usize> {
     let modified_files = repo
         .statuses(Some(git2::StatusOptions::new().include_untracked(true)))?
         .iter()
-        .map(|s| !s.status().is_ignored())
+        .filter(|s| !s.status().is_ignored())
         .count();
     Ok(modified_files)
 }
