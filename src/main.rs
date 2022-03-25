@@ -1,7 +1,7 @@
 use std::env;
 use std::error::Error;
 use std::io::{Error as IOError, ErrorKind};
-use std::process::Command;
+use std::process::{Command, Stdio};
 
 use clap::{App, Arg};
 use git2::Repository;
@@ -87,7 +87,19 @@ Examples:
                     .short('s')
                     .help("Whether to show a shortened git log"),
             ),
-        );
+        )
+        // Branch
+        .subcommand(
+            App::new("switch")
+                .alias("s")
+                .about("Switch branches, creating as needed")
+                .arg(
+                    Arg::new("branch")
+                        .help("The branch to switch to")
+                        .required(true),
+                ),
+        )
+        ;
 
     let matches = app.get_matches();
 
@@ -107,6 +119,7 @@ Examples:
             handle(push(force));
         }
         Some(("undo", _)) => handle(undo()),
+        Some(("switch", args)) => handle(switch_branch(args.value_of("branch").unwrap())),
         _ => println!("{}", repo_status()?),
     }
     Ok(())
@@ -210,6 +223,27 @@ fn undo() -> Result<()> {
         .spawn()?
         .wait()?;
     Ok(())
+}
+
+fn switch_branch(branch: &str) -> Result<()> {
+    let mut cmd = Command::new("git");
+    let cmd = cmd
+        .arg("checkout")
+        .arg(branch)
+        .stdout(Stdio::null())
+        .stderr(Stdio::null());
+    let output = cmd.spawn()?.wait()?;
+    if output.success() {
+        Ok(())
+    } else {
+        Command::new("git")
+            .arg("checkout")
+            .arg("-b")
+            .arg(branch)
+            .spawn()?
+            .wait()?;
+        Ok(())
+    }
 }
 
 // Helpers //
