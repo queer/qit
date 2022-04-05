@@ -20,7 +20,7 @@ Format:
     <emoji> <type>[(<area>)]: <message>
 
 Emojis:
-       chore 🚧
+       chore 🔨
      feature ✨
     refactor ♻️
          fix 🐛
@@ -29,20 +29,21 @@ Emojis:
          doc 📝
         deps 📦
       deploy 🚀
+         wip 🚧
     
     Emojis inspired by https://gitmoji.dev/
 
 Examples:
     ✨ feature: Add thing
     ✨ feature(cli): Improve args
-    🚧 chore: Do thing
+    🔨 chore: Do thing
     🚀 deploy(api): Deploy to production
                 ")
                 .arg(
                     Arg::new("type")
                         .help("The type of commit")
                         .possible_values(vec![
-                            "chore", "feature", "refactor", "fix", "test", "style", "doc", "deps", "deploy",
+                            "chore", "feature", "refactor", "fix", "test", "style", "doc", "deps", "deploy", "wip",
                         ])
                         .required(true),
                 )
@@ -141,7 +142,7 @@ fn handle(res: Result<()>) {
 fn commit(type_: &str, area: &Option<&str>, message: &str) -> Result<()> {
     // Emojis inspired by https://gitmoji.dev/
     let emoji = match type_ {
-        "chore" => "🚧",
+        "chore" => "🔨",
         "feature" => "✨",
         "refactor" => "♻️",
         "fix" => "🐛",
@@ -150,6 +151,7 @@ fn commit(type_: &str, area: &Option<&str>, message: &str) -> Result<()> {
         "doc" => "📝",
         "deps" => "📦",
         "deploy" => "🚀",
+        "wip" => "🚧",
         _ => {
             panic!("Unknown commit type")
         }
