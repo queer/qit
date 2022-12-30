@@ -59,6 +59,14 @@ Examples:
                     Arg::new("message")
                         .help("The commit message")
                         .required(true),
+                )
+                .arg(
+                    Arg::new("no-verify")
+                        .help("git commit --no-verify")
+                        .long("no-verify")
+                        .short('n')
+                        .takes_value(false)
+                        .required(false),
                 ),
         )
         // Push
@@ -109,7 +117,8 @@ Examples:
             let type_ = args.value_of("type").unwrap();
             let area = args.value_of("area");
             let message = args.value_of("message").unwrap();
-            handle(commit(type_, &area, message));
+            let no_verify = args.is_present("no-verify");
+            handle(commit(type_, &area, message, no_verify));
         }
         Some(("log", args)) => {
             let short = args.is_present("short");
@@ -139,7 +148,7 @@ fn handle(res: Result<()>) {
 
 // Subcommands //
 
-fn commit(type_: &str, area: &Option<&str>, message: &str) -> Result<()> {
+fn commit(type_: &str, area: &Option<&str>, message: &str, no_verify: bool) -> Result<()> {
     // Emojis inspired by https://gitmoji.dev/
     let emoji = match type_ {
         "chore" => "🔨",
@@ -179,9 +188,13 @@ fn commit(type_: &str, area: &Option<&str>, message: &str) -> Result<()> {
         .arg(".*")
         .spawn()?
         .wait()?;
-    Command::new("git")
-        .arg("commit")
-        .arg("-am")
+    let mut cmd = Command::new("git");
+
+    if no_verify {
+        cmd.arg("--no-verify");
+    }
+
+    cmd.arg("-am")
         .arg(formatted)
         .spawn()?
         .wait()?;
