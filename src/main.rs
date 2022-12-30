@@ -190,6 +190,7 @@ fn commit(type_: &str, area: &Option<&str>, message: &str, no_verify: bool) -> R
         .wait()?;
     let mut cmd = Command::new("git");
 
+    cmd.arg("commit");
     if no_verify {
         cmd.arg("--no-verify");
     }
