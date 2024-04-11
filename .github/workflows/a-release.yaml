@@ -30,7 +30,7 @@ jobs:
         uses: "actions-rs/cargo@v1"
         with:
           command: "build"
-          args: "--release --target=x86_64-unknown-linux-musl"
+          args: "--release"
       - name: "Create release"
         uses: "softprops/action-gh-release@v1"
         env:
