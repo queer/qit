@@ -242,6 +242,12 @@ fn undo() -> Result<()> {
 }
 
 fn switch_branch(branch: &str) -> Result<()> {
+    let branch = if branch == "msitress" {
+        eprintln!("‼️ correcting msitress => mistress");
+        "mistress"
+    } else {
+        branch
+    };
     let mut cmd = Command::new("git");
     let cmd = cmd
         .arg("checkout")
