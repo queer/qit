@@ -7,11 +7,11 @@ painful.
 
 ## Pretty pictures
 
-![](https://cdn.mewna.xyz/2021/12/13/L7JaBjnssyViT.png)
+![](https://amyware.nyc3.digitaloceanspaces.com/2021/12/13/L7JaBjnssyViT.png)
 
-![](https://cdn.mewna.xyz/2021/12/13/ojAq3g41ROiYw.png)
+![](https://amyware.nyc3.digitaloceanspaces.com/2021/12/13/ojAq3g41ROiYw.png)
 
-![](https://cdn.mewna.xyz/2021/12/13/EGTgy0UFXDHJ8.png)
+![](https://amyware.nyc3.digitaloceanspaces.com/2021/12/13/EGTgy0UFXDHJ8.png)
 
 ## Configuration
 
